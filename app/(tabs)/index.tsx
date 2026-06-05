@@ -1,7 +1,8 @@
 // app/(tabs)/index.tsx
-import React, { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { getSettings, syncLiturgicalData } from '../../services/calendarEngine';
+import { useFocusEffect } from 'expo-router';
 
 export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
@@ -16,30 +17,31 @@ export default function HomeScreen() {
       
       // Hit the "Today" endpoint for the selected calendar path
       const response = await fetch(`https://orthocal.info/api/${settings.calendar}/`);
-      if (!response.ok) throw new Error('Failed to fetch today\'s calendar details');
+      if (!response.ok) throw new Error('failed to fetch today\'s calendar details');
       
       const data = await response.json();
       setDayData(data);
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Could not load today\'s liturgical calendar.');
+      Alert.alert('error', 'could not load today\'s liturgical calendar.');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadTodayData();
-  }, []);
+  useFocusEffect(
+      useCallback(() => {
+          loadTodayData();
+      }, [])
+  );
 
-  // Manually invoke the background engine to schedule local notifications immediately
   const handleManualSync = async () => {
     try {
       setSyncing(true);
       await syncLiturgicalData();
-      Alert.alert('Sync Complete', 'The next 10 days of fasting rules have been scheduled to your device alerts.');
+      Alert.alert('sync complete', 'the next 10 days of fasting rules have been scheduled to your device alerts.');
     } catch (error) {
-      Alert.alert('Sync Failed', 'Failed to register local notifications.');
+      Alert.alert('sync failed', 'failed to register local notifications.');
     } finally {
       setSyncing(false);
     }
