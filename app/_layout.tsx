@@ -24,6 +24,8 @@ export default function RootLayout() {
     useEffect(() => {
         async function initializeApp() {
             try {
+                await SplashScreen.hideAsync();
+
                 const { status: existingStatus } = await Notifications.getPermissionsAsync();
                 let finalStatus = existingStatus;
 
@@ -39,7 +41,7 @@ export default function RootLayout() {
                     console.log("failed to get token for push notification");
                 }
 
-                await new Promise(resolve => setTimeout(resolve, 5000));
+                await new Promise(resolve => setTimeout(resolve, 2500));
             } catch (e) {
                 console.warn(e);
             } finally {
@@ -52,46 +54,40 @@ export default function RootLayout() {
 
     useEffect(() => {
         if (appIsReady) {
-            SplashScreen.hideAsync();
-
             Animated.timing(fadeAnimation, {
                 toValue: 0,
                 duration: 2500,
                 useNativeDriver: true,
             }).start();
         }
-    }, [appIsReady])
+    }, [appIsReady]);
 
-return (
-    <View style={styles.mainContainer}>
-      {/* Your existing Router setup */}
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+    return (
+        <View style={styles.mainContainer}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
 
-      {/* The Animated Splash Screen Overlay */}
-      <Animated.View
-        pointerEvents="none" // Lets the user tap the screen once it fades out!
-        style={[
-          styles.splashOverlay,
-          { opacity: fadeAnimation }
-        ]}
-      >
-      <Image
-        source={require('../assets/images/typikon-logo.jpg')}
-        style={styles.logoImage}
-        resizeMode="contain"
-      />
-      <Text style={styles.logoSubtitle}>The Typikon: Orthodox Fast Tracker</Text>
-      </Animated.View>
-    </View>
-  );
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.splashOverlay,
+              { opacity: fadeAnimation }
+            ]}
+          >
+            <Image
+              source={require('../assets/images/typikon-logo.jpg')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+            <Text style={styles.logoSubtitle}>The Typikon: Orthodox Fast Tracker</Text>
+          </Animated.View>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  mainContainer: { 
-    flex: 1 
-  },
+  mainContainer: { flex: 1 },
 
   splashOverlay: {
     ...StyleSheet.absoluteFill, 
@@ -101,16 +97,6 @@ const styles = StyleSheet.create({
     zIndex: 999, 
   },
 
-  logoImage: {
-    width: 193,  
-    height: 250,
-    marginBottom: 24,
-  },
-
-  logoSubtitle: {
-    color: '#2c2a27',
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-  }
+  logoImage: { width: 193, height: 250, marginBottom: 24 },
+  logoSubtitle: { color: '#2c2a27', fontSize: 16, fontWeight: '700', letterSpacing: 0.5 }
 });
