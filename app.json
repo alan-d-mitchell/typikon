@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "the-typikon",
-    "slug": "the-typikon",
+    "slug": "typikon",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -37,6 +37,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d59ef8e5-933c-44a0-8ec6-6db294a39e1e"
+      }
+    },
+    "owner": "amitchell"
   }
 }
